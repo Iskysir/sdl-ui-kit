@@ -32,6 +32,7 @@ Widget::Widget(App *app_p, int pos_x, int pos_y, int width, int height, Uint8 re
 	border_g = 0;
 	border_b = 0;
 	widget_type = "widget";
+	visible = true;
 }
 
 void Widget::addWidget(void * widget) {
@@ -61,35 +62,37 @@ void Widget::setBorderWidth(int width) {
 
 void Widget::render()
 {
-	if (parent != NULL) {
-		Widget* p = (Widget*)parent;
-		SDL_RenderSetClipRect(app->renderer, &p->rect);
+	if (visible == true) {
+		if (parent != NULL) {
+			Widget* p = (Widget*)parent;
+			SDL_RenderSetClipRect(app->renderer, &p->rect);
+		}
+		if (percentage_active) {
+			x = (px * app->window_w) / 100;
+			y = (py * app->window_h) / 100;
+			w = (p_width * app->window_w) / 100;
+			h = (p_height * app->window_h) / 100;
+			rect.x = x;
+			rect.y = y;
+			rect.w = w;
+			rect.h = h;
+		}
+		SDL_SetRenderDrawColor(app->renderer, border_r, border_g, border_b, 255);
+		if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
+		    printf("Widget failed: %s\n", SDL_GetError());
+		}
+		SDL_Rect inner_rect;
+		inner_rect.x = rect.x + borderWidth;
+		inner_rect.y = rect.y + borderWidth;
+		inner_rect.w = rect.w - (borderWidth * 2);
+		inner_rect.h = rect.h - (borderWidth * 2);
+		SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
+		if (SDL_RenderFillRect(app->renderer, &inner_rect) < 0) {
+		    printf("Widget failed: %s\n", SDL_GetError());
+		}
+		SDL_RenderSetClipRect(app->renderer, &app->rect);
+		renderChildren();
 	}
-	if (percentage_active) {
-		x = (px * app->window_w) / 100;
-		y = (py * app->window_h) / 100;
-		w = (p_width * app->window_w) / 100;
-		h = (p_height * app->window_h) / 100;
-		rect.x = x;
-		rect.y = y;
-		rect.w = w;
-		rect.h = h;
-	}
-	SDL_SetRenderDrawColor(app->renderer, border_r, border_g, border_b, 255);
-	if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
-	    printf("Widget failed: %s\n", SDL_GetError());
-	}
-	SDL_Rect inner_rect;
-	inner_rect.x = rect.x + borderWidth;
-	inner_rect.y = rect.y + borderWidth;
-	inner_rect.w = rect.w - (borderWidth * 2);
-	inner_rect.h = rect.h - (borderWidth * 2);
-	SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
-	if (SDL_RenderFillRect(app->renderer, &inner_rect) < 0) {
-	    printf("Widget failed: %s\n", SDL_GetError());
-	}
-	SDL_RenderSetClipRect(app->renderer, &app->rect);
-	renderChildren();
 }
 
 void Widget::renderChildren()

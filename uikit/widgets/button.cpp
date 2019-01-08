@@ -48,49 +48,51 @@ void Button::setFontSize(int size) {
 
 void Button::render()
 {
-	if (parent != NULL) {
-		Widget* p = (Widget*)parent;
-		SDL_RenderSetClipRect(app->renderer, &p->rect);
-	}
-	SDL_SetRenderDrawColor(app->renderer, border_r, border_g, border_b, 255);
-	if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
-	    printf("Widget failed: %s\n", SDL_GetError());
-	}
-	SDL_Rect inner_rect;
-	inner_rect.x = rect.x + borderWidth;
-	inner_rect.y = rect.y + borderWidth;
-	inner_rect.w = rect.w - (borderWidth * 2);
-	inner_rect.h = rect.h - (borderWidth * 2);
-	SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
-	if (SDL_RenderFillRect(app->renderer, &inner_rect) < 0) {
-	    printf("Widget failed: %s\n", SDL_GetError());
-	}
-	
-	SDL_Color color = {text_r, text_g, text_b,0};
-	
-	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(font, text.c_str(), color);
+	if (visible == true) {
+		if (parent != NULL) {
+			Widget* p = (Widget*)parent;
+			SDL_RenderSetClipRect(app->renderer, &p->rect);
+		}
+		SDL_SetRenderDrawColor(app->renderer, border_r, border_g, border_b, 255);
+		if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
+		    printf("Widget failed: %s\n", SDL_GetError());
+		}
+		SDL_Rect inner_rect;
+		inner_rect.x = rect.x + borderWidth;
+		inner_rect.y = rect.y + borderWidth;
+		inner_rect.w = rect.w - (borderWidth * 2);
+		inner_rect.h = rect.h - (borderWidth * 2);
+		SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
+		if (SDL_RenderFillRect(app->renderer, &inner_rect) < 0) {
+		    printf("Widget failed: %s\n", SDL_GetError());
+		}
+		
+		SDL_Color color = {text_r, text_g, text_b,0};
+		
+		SDL_Surface* surfaceMessage = TTF_RenderText_Blended(font, text.c_str(), color);
 
-	SDL_Texture* message = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
+		SDL_Texture* message = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
 
-	int text_w, text_h;
-	text_w = 0;
-	text_h = 0;
-	TTF_SizeText(font, text.c_str(),&text_w,&text_h);
-	float ratio = (float)text_w / (float)text_h;
-	SDL_Rect text_rect;
-	text_rect.x = rect.x;
-	text_rect.y = rect.y;
-	text_rect.h = line_height;
-	text_rect.w = text_rect.h * ratio;
-	
-	SDL_RenderSetClipRect(app->renderer, &rect);
-	if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
-		printf("Textbox failed: %s\n", SDL_GetError());
+		int text_w, text_h;
+		text_w = 0;
+		text_h = 0;
+		TTF_SizeText(font, text.c_str(),&text_w,&text_h);
+		float ratio = (float)text_w / (float)text_h;
+		SDL_Rect text_rect;
+		text_rect.x = rect.x;
+		text_rect.y = rect.y;
+		text_rect.h = line_height;
+		text_rect.w = text_rect.h * ratio;
+		
+		SDL_RenderSetClipRect(app->renderer, &rect);
+		if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
+			printf("Textbox failed: %s\n", SDL_GetError());
+		}
+		
+		SDL_FreeSurface(surfaceMessage);
+		SDL_DestroyTexture(message);
+		SDL_RenderSetClipRect(app->renderer, &app->rect);
 	}
-	
-	SDL_FreeSurface(surfaceMessage);
-	SDL_DestroyTexture(message);
-	SDL_RenderSetClipRect(app->renderer, &app->rect);
 }
 
 void Button::handleEvent( SDL_Event* e )

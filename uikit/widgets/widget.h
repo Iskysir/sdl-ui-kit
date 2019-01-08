@@ -53,6 +53,7 @@ class Widget
 		string widget_type;
 		void* parent;
 		vector<void*> widgets;
+		bool visible;
 };
 
 #endif// WIDGET

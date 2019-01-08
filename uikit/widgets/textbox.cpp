@@ -66,97 +66,99 @@ void Textbox::scrollUp() {
 
 void Textbox::render()
 {
-	if (lines.size() < 1) {
-		lines.push_back(text);
-		cursor = (int)text.size();
-		text_y = rect.y;
-	}
+	if (visible == true) {
+		if (lines.size() < 1) {
+			lines.push_back(text);
+			cursor = (int)text.size();
+			text_y = rect.y;
+		}
 
-	if (parent != NULL) {
-		Widget* p = (Widget*)parent;
-		SDL_Rect clip_rect;
-		clip_rect.x = rect.x;
-		clip_rect.y = (p->rect.y + text_y > p->rect.y) ? p->rect.y : max(p->rect.y + text_y, p->rect.y);
-		clip_rect.w = rect.w;
-		clip_rect.h = (clip_rect.y + rect.h < p->rect.h) ? clip_rect.y + rect.h : p->rect.h;
-		SDL_RenderSetClipRect(app->renderer, &clip_rect);
-	}
-	else {
-		SDL_Rect clip_rect;
-		clip_rect.x = rect.x;
-		clip_rect.y = rect.y;
-		clip_rect.w = rect.w;
-		clip_rect.h = rect.h;
-		SDL_RenderSetClipRect(app->renderer, &clip_rect);
-	}
+		if (parent != NULL) {
+			Widget* p = (Widget*)parent;
+			SDL_Rect clip_rect;
+			clip_rect.x = rect.x;
+			clip_rect.y = (p->rect.y + text_y > p->rect.y) ? p->rect.y : max(p->rect.y + text_y, p->rect.y);
+			clip_rect.w = rect.w;
+			clip_rect.h = (clip_rect.y + rect.h < p->rect.h) ? clip_rect.y + rect.h : p->rect.h;
+			SDL_RenderSetClipRect(app->renderer, &clip_rect);
+		}
+		else {
+			SDL_Rect clip_rect;
+			clip_rect.x = rect.x;
+			clip_rect.y = rect.y;
+			clip_rect.w = rect.w;
+			clip_rect.h = rect.h;
+			SDL_RenderSetClipRect(app->renderer, &clip_rect);
+		}
 
-	SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
-	if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
-	    printf("Textbox failed: %s\n", SDL_GetError());
-	}
+		SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
+		if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
+		    printf("Textbox failed: %s\n", SDL_GetError());
+		}
 
-	for (int i=0; i < (int)lines.size(); i++) {
-	    
-		
-		SDL_Color color = {text_r,text_g,text_b, 255};
-		
-		SDL_Surface* surfaceMessage = TTF_RenderText_Blended(font, lines[i].c_str(), color);
+		for (int i=0; i < (int)lines.size(); i++) {
+		    
+			
+			SDL_Color color = {text_r,text_g,text_b, 255};
+			
+			SDL_Surface* surfaceMessage = TTF_RenderText_Blended(font, lines[i].c_str(), color);
 
-		SDL_Texture* message = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
+			SDL_Texture* message = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
 
-		int text_w, text_h;
-		text_w = 0;
-		text_h = 0;
-		TTF_SizeText(font,lines[i].c_str(),&text_w,&text_h);
-		float ratio = (float)text_w / (float)text_h;
-		SDL_Rect text_rect;
-		text_rect.x = rect.x;
-		text_rect.y = text_y + (line_height * (i));
-		text_rect.h = line_height;
-		text_rect.w = text_rect.h * ratio;
-		if (text_rect.w > rect.w) {
-			string ch = "";
-			char last_ch = lines[current_line].back();
-			ch.push_back(last_ch);
-			lines[current_line].erase(cursor - 1, 1);
-			cursor -= 1;
-			lines.push_back("");
-			current_line += 1;
-			cursor = 0;
-			lines[current_line].insert(cursor, ch);
-			cursor += 1;
-			if (line_height * (int)lines.size() > rect.h) {
-				scrollDown();
+			int text_w, text_h;
+			text_w = 0;
+			text_h = 0;
+			TTF_SizeText(font,lines[i].c_str(),&text_w,&text_h);
+			float ratio = (float)text_w / (float)text_h;
+			SDL_Rect text_rect;
+			text_rect.x = rect.x;
+			text_rect.y = text_y + (line_height * (i));
+			text_rect.h = line_height;
+			text_rect.w = text_rect.h * ratio;
+			if (text_rect.w > rect.w) {
+				string ch = "";
+				char last_ch = lines[current_line].back();
+				ch.push_back(last_ch);
+				lines[current_line].erase(cursor - 1, 1);
+				cursor -= 1;
+				lines.push_back("");
+				current_line += 1;
+				cursor = 0;
+				lines[current_line].insert(cursor, ch);
+				cursor += 1;
+				if (line_height * (int)lines.size() > rect.h) {
+					scrollDown();
+				}
+			}
+			
+			printf("x: %d\n", text_rect.x);
+			printf("y: %d\n", text_rect.y);
+			printf("w: %d\n", text_rect.w);
+			printf("h: %d\n", text_rect.h);
+
+			if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
+				printf("Textbox failed: %s\n", SDL_GetError());
+			}
+			
+			SDL_FreeSurface(surfaceMessage);
+			SDL_DestroyTexture(message);
+
+			if (current_line == i) {
+				int w, h;
+				string t = lines[i].substr(0, cursor);
+				TTF_SizeText(font,t.c_str(),&w,&h);
+				float t_ratio = (float)w / (float)h;
+				SDL_Rect t_rect;
+				t_rect.x = rect.x;
+				t_rect.y = text_y + (line_height * (i));
+				t_rect.h = line_height;
+				t_rect.w = t_rect.h * t_ratio;
+				SDL_SetRenderDrawColor(app->renderer, text_r, text_g, text_b, SDL_ALPHA_OPAQUE);
+			    SDL_RenderDrawLine(app->renderer, t_rect.x + t_rect.w, t_rect.y, t_rect.x + t_rect.w, t_rect.y + t_rect.h);
 			}
 		}
-		
-		printf("x: %d\n", text_rect.x);
-		printf("y: %d\n", text_rect.y);
-		printf("w: %d\n", text_rect.w);
-		printf("h: %d\n", text_rect.h);
-
-		if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
-			printf("Textbox failed: %s\n", SDL_GetError());
-		}
-		
-		SDL_FreeSurface(surfaceMessage);
-		SDL_DestroyTexture(message);
-
-		if (current_line == i) {
-			int w, h;
-			string t = lines[i].substr(0, cursor);
-			TTF_SizeText(font,t.c_str(),&w,&h);
-			float t_ratio = (float)w / (float)h;
-			SDL_Rect t_rect;
-			t_rect.x = rect.x;
-			t_rect.y = text_y + (line_height * (i));
-			t_rect.h = line_height;
-			t_rect.w = t_rect.h * t_ratio;
-			SDL_SetRenderDrawColor(app->renderer, text_r, text_g, text_b, SDL_ALPHA_OPAQUE);
-		    SDL_RenderDrawLine(app->renderer, t_rect.x + t_rect.w, t_rect.y, t_rect.x + t_rect.w, t_rect.y + t_rect.h);
-		}
+		SDL_RenderSetClipRect(app->renderer, &app->rect);
 	}
-	SDL_RenderSetClipRect(app->renderer, &app->rect);
 	
 }
 

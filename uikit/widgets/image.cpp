@@ -17,12 +17,14 @@ Image::Image(App *app, string image_path, int pos_x, int pos_y, int width, int h
 }
 
 void Image::render() {
-	if (parent != NULL) {
-		Widget* p = (Widget*)parent;
-		SDL_RenderSetClipRect(app->renderer, &p->rect);
+	if (visible == true) {
+		if (parent != NULL) {
+			Widget* p = (Widget*)parent;
+			SDL_RenderSetClipRect(app->renderer, &p->rect);
+		}
+	    SDL_RenderCopy(app->renderer, image, NULL, &rect);
+	    SDL_RenderSetClipRect(app->renderer, &app->rect);
 	}
-    SDL_RenderCopy(app->renderer, image, NULL, &rect);
-    SDL_RenderSetClipRect(app->renderer, &app->rect);
 }
 
 void Image::handleEvent( SDL_Event* e )

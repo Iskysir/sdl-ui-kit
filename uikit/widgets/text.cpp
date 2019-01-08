@@ -59,58 +59,60 @@ void Text::setFontSize(int size) {
 
 void Text::render()
 {
-	if (parent != NULL) {
-		Widget* p = (Widget*)parent;
-		SDL_Rect clip_rect;
-		clip_rect.x = rect.x;
-		clip_rect.y = (p->rect.y + rect.y > p->rect.y) ? p->rect.y : max(p->rect.y + rect.y, p->rect.y);
-		clip_rect.w = rect.w;
-		clip_rect.h = (clip_rect.y + rect.h < p->rect.h) ? clip_rect.y + rect.h : p->rect.h;
-		SDL_RenderSetClipRect(app->renderer, &clip_rect);
-	}
-	if (percentage_active) {
-		rect.x = (px * app->window_w) / 100;
-		rect.y = (py * app->window_h) / 100;
-		rect.w = (p_width * app->window_w) / 100;
-		rect.h = (p_height * app->window_h) / 100;
-	}
-	SDL_SetRenderDrawColor(app->renderer, border_r, border_g, border_b, 255);
-	if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
-	    printf("Widget failed: %s\n", SDL_GetError());
-	}
-	SDL_Rect inner_rect;
-	inner_rect.x = rect.x + borderWidth;
-	inner_rect.y = rect.y + borderWidth;
-	inner_rect.w = rect.w - (borderWidth * 2);
-	inner_rect.h = rect.h - (borderWidth * 2);
-	SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
-	if (SDL_RenderFillRect(app->renderer, &inner_rect) < 0) {
-	    printf("Widget failed: %s\n", SDL_GetError());
-	}
-		
-	if (text != "") {
+	if (visible == true) {
+		if (parent != NULL) {
+			Widget* p = (Widget*)parent;
+			SDL_Rect clip_rect;
+			clip_rect.x = rect.x;
+			clip_rect.y = (p->rect.y + rect.y > p->rect.y) ? p->rect.y : max(p->rect.y + rect.y, p->rect.y);
+			clip_rect.w = rect.w;
+			clip_rect.h = (clip_rect.y + rect.h < p->rect.h) ? clip_rect.y + rect.h : p->rect.h;
+			SDL_RenderSetClipRect(app->renderer, &clip_rect);
+		}
+		if (percentage_active) {
+			rect.x = (px * app->window_w) / 100;
+			rect.y = (py * app->window_h) / 100;
+			rect.w = (p_width * app->window_w) / 100;
+			rect.h = (p_height * app->window_h) / 100;
+		}
+		SDL_SetRenderDrawColor(app->renderer, border_r, border_g, border_b, 255);
+		if (SDL_RenderFillRect(app->renderer, &rect) < 0) {
+		    printf("Widget failed: %s\n", SDL_GetError());
+		}
+		SDL_Rect inner_rect;
+		inner_rect.x = rect.x + borderWidth;
+		inner_rect.y = rect.y + borderWidth;
+		inner_rect.w = rect.w - (borderWidth * 2);
+		inner_rect.h = rect.h - (borderWidth * 2);
+		SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
+		if (SDL_RenderFillRect(app->renderer, &inner_rect) < 0) {
+		    printf("Widget failed: %s\n", SDL_GetError());
+		}
+			
+		if (text != "") {
 
-		SDL_Texture* message = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
+			SDL_Texture* message = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
 
-		int text_w, text_h;
-		text_w = 0;
-		text_h = 0;
-		SDL_QueryTexture(message, NULL, NULL, &text_w, &text_h);
-		SDL_Rect text_rect;
-		text_rect.x = rect.x;
-		text_rect.y = rect.y;
-		text_rect.w = text_w;
-		text_rect.h = text_h;
+			int text_w, text_h;
+			text_w = 0;
+			text_h = 0;
+			SDL_QueryTexture(message, NULL, NULL, &text_w, &text_h);
+			SDL_Rect text_rect;
+			text_rect.x = rect.x;
+			text_rect.y = rect.y;
+			text_rect.w = text_w;
+			text_rect.h = text_h;
 
-		if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
-			printf("Text failed: %s\n", SDL_GetError());
+			if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
+				printf("Text failed: %s\n", SDL_GetError());
+			}
+			
+			
+			SDL_DestroyTexture(message);
 		}
 		
-		
-		SDL_DestroyTexture(message);
+		SDL_RenderSetClipRect(app->renderer, &app->rect);
 	}
-	
-	SDL_RenderSetClipRect(app->renderer, &app->rect);
 }
 
 int Text::getWidth()
