@@ -7,11 +7,19 @@ Work In Progress
 
 ## Install
 
+### Ubuntu
 ```
 sudo apt-get install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libboost-all-dev 
 make
 ./main
 ```
+### Arch
+```
+sudo pacman -S sdl2 sdl2_ttf sdl2_image boost boost-libs
+make
+./main
+```
+
 
 ## App
 
