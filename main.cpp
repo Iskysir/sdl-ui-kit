@@ -5,6 +5,7 @@
 #include "uikit/widgets/text.h"
 #include "uikit/widgets/textbox.h"
 #include "uikit/widgets/image.h"
+#include "uikit/widgets/checkbox.h"
 #include <vector>
 
 void on_press_button1() {
@@ -19,6 +20,10 @@ void on_press_button3() {
 	printf("Button3 pressed\n");
 }
 
+void on_press_checkbox1() {
+	printf("Checkbox1 pressed\n");
+}
+
 int main( int argc, char* args[] ) {
 	App app = App();
 	app.init("Title", 640, 480, false);
@@ -26,6 +31,10 @@ int main( int argc, char* args[] ) {
 
 	Image image1 = Image(&app, "images/flower.png", 0, 0, 30, 30);
 	app.addWidget(&image1);
+
+	Checkbox checkbox1 = Checkbox(&app, 100, 0, 30, 30);
+	checkbox1.cb = on_press_checkbox1;
+	app.addWidget(&checkbox1);
 
 	Button button1 = Button(&app, 280, 0, 120, 30, 75, 124, 162);
 	button1.cb = on_press_button1;

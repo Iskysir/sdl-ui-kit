@@ -130,11 +130,6 @@ void Textbox::render()
 					scrollDown();
 				}
 			}
-			
-			printf("x: %d\n", text_rect.x);
-			printf("y: %d\n", text_rect.y);
-			printf("w: %d\n", text_rect.w);
-			printf("h: %d\n", text_rect.h);
 
 			if(SDL_RenderCopy(app->renderer, message, NULL, &text_rect) < 0) {
 				printf("Textbox failed: %s\n", SDL_GetError());
