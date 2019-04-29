@@ -33,7 +33,6 @@ void Checkbox::renderUnchecked() {
 			Widget* p = (Widget*)parent;
 			SDL_RenderSetClipRect(app->renderer, &p->rect);
 		}
-		printf("y2");
 	    SDL_RenderCopy(app->renderer, image_unchecked, NULL, &rect);
 	    SDL_RenderSetClipRect(app->renderer, &app->rect);
 	}
@@ -51,25 +50,17 @@ void Checkbox::renderChecked() {
 }
 
 void Checkbox::handleEvent(SDL_Event* e) {
-	printf("x1\n");
 	if (e->type == SDL_MOUSEBUTTONDOWN) {
 		int mouse_x, mouse_y;
 		SDL_GetMouseState(&mouse_x, &mouse_y);
-		printf("x2");
 		if (mouse_x > x && mouse_x < x + w && mouse_y > y && mouse_y < y + h) {
-			printf("x3\n");
-			printf("%p", &cb);
-			if (&cb != NULL) {
-				cb();
-			}
-			printf("x4\n");
+			cb();
 			if (isChecked == false) {
 				isChecked = true;
 			}
 			else {
 				isChecked = false;
 			}
-			printf("x5\n");
 		}
 
 	}

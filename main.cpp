@@ -6,6 +6,7 @@
 #include "uikit/widgets/textbox.h"
 #include "uikit/widgets/image.h"
 #include "uikit/widgets/checkbox.h"
+#include "uikit/widgets/slider.h"
 #include <vector>
 
 void on_press_button1() {
@@ -24,21 +25,29 @@ void on_press_checkbox1() {
 	printf("Checkbox1 pressed\n");
 }
 
+void on_press_slider1() {
+	printf("Slider1 pressed\n");
+}
+
 int main( int argc, char* args[] ) {
 	App app = App();
-	app.init("Title", 640, 480, false);
+	app.init("Title", 800, 600, false);
 	app.setBackgroundColor(200, 200, 200);
 
 	Image image1 = Image(&app, "images/flower.png", 0, 0, 30, 30);
 	app.addWidget(&image1);
 
-	Checkbox checkbox1 = Checkbox(&app, 100, 0, 30, 30);
+	Checkbox checkbox1 = Checkbox(&app, 100, 550, 40, 40);
 	checkbox1.cb = on_press_checkbox1;
 	app.addWidget(&checkbox1);
 
+	Slider slider1 = Slider(&app, 200, 550, 150, 40);
+	slider1.cb = on_press_slider1;
+	app.addWidget(&slider1);
+
 	Button button1 = Button(&app, 280, 0, 120, 30, 75, 124, 162);
 	button1.cb = on_press_button1;
-	button1.setTextColor(255,255,255);
+	button1.setTextColor(255, 255, 255);
 	button1.setText("Button1");
 	button1.setBorderWidth(2);
 	button1.setBorderColor(4, 46, 79);

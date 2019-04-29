@@ -10,6 +10,7 @@
 #include "../widgets/button.h"
 #include "../widgets/image.h"
 #include "../widgets/checkbox.h"
+#include "../widgets/slider.h"
 using namespace std;
 
 void App::init(string window_title, int width, int height, bool maximize) {
@@ -96,6 +97,10 @@ void App::start() {
 				if (w->widget_type == "checkbox") {
 					Checkbox *chk = (Checkbox*)widgets[i];
 					chk->handleEvent(&e);
+				}
+				if (w->widget_type == "slider") {
+					Slider *sl = (Slider*)widgets[i];
+					sl->handleEvent(&e);
 				}
 
 			}
@@ -220,6 +225,10 @@ void App::render()
 		else if (w->widget_type == "checkbox") {
 			Checkbox *chk = (Checkbox*)widgets[i];
 			chk->render();
+		}
+		else if (w->widget_type == "slider") {
+			Slider *sl = (Slider*)widgets[i];
+			sl->render();
 		}
 
 	}
