@@ -82,3 +82,19 @@ textbox1.setFontSize(int size);
 ```
 Image image1 = Image(&app, "path/to/file.png", 0, 0, 30, 30);
 ```
+
+## Slider
+
+```
+Slider slider1 = Slider(&app, 200, 550, 150, 40);
+slider1.cb = on_press_slider1;
+app.addWidget(&slider1);
+```
+
+## Checkbox
+
+```
+Checkbox checkbox1 = Checkbox(&app, 100, 550, 40, 40);
+checkbox1.cb = on_press_checkbox1;
+app.addWidget(&checkbox1);
+```
