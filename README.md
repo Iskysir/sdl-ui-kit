@@ -3,8 +3,6 @@ SDL2 C++ UI kit
 
 Work In Progress
 
-![license](https://i.creativecommons.org/l/by-nc-sa/2.0/88x31.png)
-
 ## Install
 
 ### Ubuntu
